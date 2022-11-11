@@ -32,3 +32,11 @@ class TestArtistGraph(TestCase):
         self.emptygraph.add_artist(self.a)
         self.assertTrue(self.emptygraph.has_node(self.a))
         self.assertFalse(self.emptygraph.has_node(self.b))
+
+    def test_artists(self):
+        self.assertEqual(self.artistlist, self.artistgraph.artists)
+
+    def test_collaborations(self):
+        self.x = Collaboration(self.a, self.b)
+        self.emptygraph.add_collaboration(self.x)
+        self.assertEqual(self.x, self.emptygraph.collaborations[0])
