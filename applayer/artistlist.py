@@ -19,8 +19,11 @@ class ArtistList(object):
         """
         self.__artist_objects: List[Artist] = []
         self.__artists: List[Tuple[int, str]] = []
-        mongo_if: MongoBridge = MongoBridge("mongodb://localhost:27017/", "BristolData", "Artists")
-        artists_list = mongo_if.get_artists_from_list(ids)
+        try:
+            mongo_if: MongoBridge = MongoBridge("mongodb://localhost:27017/", "BristolData", "Artists")
+            artists_list = mongo_if.get_artists_from_list(ids)
+        except ServerSelectionTimeoutError:
+            raise ServerSelectionTimeoutError
         for a in artists_list:
             artist = Artist(a)
             self.__artist_objects.append(artist)
@@ -35,14 +38,16 @@ class ArtistList(object):
         """
         self.__artist_objects: List[Artist] = []
         self.__artists: List[Tuple[int, str]] = []
-        mongo_if: MongoBridge = MongoBridge(uri, db, coll)
-        artists_list = mongo_if.get_artists_from_list(ids)
+        try:
+            mongo_if: MongoBridge = MongoBridge(uri, db, coll)
+            artists_list = mongo_if.get_artists_from_list(ids)
+        except ServerSelectionTimeoutError:
+            raise ServerSelectionTimeoutError
         for a in artists_list:
             artist = Artist(a)
             self.__artist_objects.append(artist)
             self.__artists.append((artist.artistID, artist.artistName))
         self.__artists.sort(key=lambda x: x[1])
-
 
     @dispatch()
     def __init__(self):
@@ -53,8 +58,11 @@ class ArtistList(object):
         """
         self.__artist_objects: List[Artist] = []
         self.__artists: List[Tuple[int, str]] = []
-        mongo_if: MongoBridge = MongoBridge("mongodb://localhost:27017/", "BristolData", "Artists")
-        artists = mongo_if.get_all_artists()
+        try:
+            mongo_if: MongoBridge = MongoBridge("mongodb://localhost:27017/", "BristolData", "Artists")
+            artists = mongo_if.get_all_artists()
+        except ServerSelectionTimeoutError:
+            raise ServerSelectionTimeoutError
         for a in artists:
             artist = Artist(a)
             self.__artist_objects.append(artist)
@@ -70,8 +78,11 @@ class ArtistList(object):
         """
         self.__artist_objects: List[Artist] = []
         self.__artists: List[Tuple[int, str]] = []
-        mongo_if: MongoBridge = MongoBridge(uri, db, coll)
-        artists = mongo_if.get_all_artists()
+        try:
+            mongo_if: MongoBridge = MongoBridge(uri, db, coll)
+            artists = mongo_if.get_all_artists()
+        except ServerSelectionTimeoutError:
+            raise ServerSelectionTimeoutError
         for a in artists:
             artist = Artist(a)
             self.__artist_objects.append(artist)

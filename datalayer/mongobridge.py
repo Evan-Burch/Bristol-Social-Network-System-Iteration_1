@@ -1,6 +1,7 @@
 import pymongo
 from typing import List, Any
 from multipledispatch import dispatch
+from datalayer.artistnotfound import ArtistNotFound
 
 
 class MongoBridge(object):
@@ -42,6 +43,8 @@ class MongoBridge(object):
         artists = self.__myCollection.find()
         for a in artists:
             result.append(a)
+        if result == []:
+            raise ArtistNotFound("Artist could not be found in database", 0)
         return result
 
     def get_artists_from_list(self, a_list: list[int]) -> List[dict]:
@@ -65,6 +68,8 @@ class MongoBridge(object):
             a = self.__myCollection.find_one(afilter)
             if a is not None:
                 result.append(a)
+        if result == []:
+            raise ArtistNotFound("Artist could not be found in database", 0)
         return result
 
     def get_artist_by_id(self, aid: int) -> dict:
@@ -85,4 +90,6 @@ class MongoBridge(object):
         """
         afilter = {"artistID": aid}
         artist = self.__myCollection.find_one(afilter)
+        if artist is None:
+            raise ArtistNotFound("Artist could not be found in database", 0)
         return artist
