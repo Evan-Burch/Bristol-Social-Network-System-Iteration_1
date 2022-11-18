@@ -34,9 +34,14 @@ class TestArtistGraph(TestCase):
         self.assertFalse(self.emptygraph.has_node(self.b))
 
     def test_artists(self):
-        self.assertEqual(self.artistlist, self.artistgraph.artists)
+        self.emptygraph.add_artist(self.a)
+        self.emptygraph.add_artist(self.b)
+        self.assertEqual(self.a, self.emptygraph.artists[0])
+        self.assertEqual(self.b, self.emptygraph.artists[1])
+        self.assertEqual(2, len(self.emptygraph.artists))
 
     def test_collaborations(self):
         self.x = Collaboration(self.a, self.b)
         self.emptygraph.add_collaboration(self.x)
         self.assertEqual(self.x, self.emptygraph.collaborations[0])
+        self.assertEqual(1, len(self.emptygraph.collaborations))
