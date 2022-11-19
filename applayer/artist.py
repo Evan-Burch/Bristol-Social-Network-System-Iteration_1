@@ -31,7 +31,7 @@ class Artist(object):
         self.__artistName: str = name
         self.__realName: str = real_name
         self.__profile: str = profile
-        self.__collaborators: List[dict] = None
+        self.__collaborators: List[dict] = []
         self.__level: int = level
 
     @property

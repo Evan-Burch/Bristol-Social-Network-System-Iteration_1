@@ -43,7 +43,7 @@ class MongoBridge(object):
         artists = self.__myCollection.find()
         for a in artists:
             result.append(a)
-        if result == []:
+        if not result:
             raise ArtistNotFound("Artist could not be found in database", 0)
         return result
 
@@ -68,7 +68,7 @@ class MongoBridge(object):
             a = self.__myCollection.find_one(afilter)
             if a is not None:
                 result.append(a)
-        if result == []:
+        if not result:
             raise ArtistNotFound("Artist could not be found in database", 0)
         return result
 
