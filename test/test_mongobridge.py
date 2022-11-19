@@ -1,8 +1,4 @@
 from unittest import TestCase
-
-import pymongo.errors
-
-import datalayer.artistnotfound
 from datalayer.mongobridge import MongoBridge
 from datalayer.artistnotfound import ArtistNotFound
 from pymongo.errors import ServerSelectionTimeoutError
