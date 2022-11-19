@@ -23,49 +23,49 @@ class ArtistGraph(GraphBase):
         self.__collaborations: List[Collaboration] = []
         self.__mongo: MongoBridge = MongoBridge("mongodb://localhost:27017/", "BristolData", "Artists")
 
-        # Add each artist to artists
+        # Copy level 0 artists to self.__artists and add them to the graph
         self.__artists = artist_list.artist_objects.copy()
         for i in self.__artists:
             super().add_node(i)
 
+        # Variables to keep track of when all artists at current level have been added
         level: int = 1
         artists_at_depth: int = len(self.__artists)
         artists_added: int = 0
         for i in self.__artists:
+            # Check if all artists at the current level have been added. If so, increment level
             if artists_added == artists_at_depth:
                 level += 1
                 artists_added = 0
                 artists_at_depth = len(self.__artists) - artists_at_depth
-
             artists_added += 1
-            # Check if each collaborator exists in the database as its own Artist. If it does then make an
-            # Artist with the data found. If it doesn't then make an Artist from scratch. Add role data to roles
+
             for j in i.collaborators:
+                # If collaborator exists in the database as its own Artist then create an Artist with the data.
                 try:
                     artist_info: dict = self.__mongo.get_artist_by_id(j["collaboratorID"])
                     second_artist: Artist = Artist(artist_info)
                     second_artist.level = level
                 except ArtistNotFound:
+                    # If it doesn't then make an Artist from scratch.
                     second_artist: Artist = Artist(j["collaboratorID"], j["collaboratorName"], "", "", level)
 
                 # If this artist has not been added to the graph yet, add it
                 if not super().has_node(second_artist):
+                    # Only add artist to list if this artist's collaborators need to be added
                     if second_artist.level < depth:
                         self.add_artist(second_artist)
                     super().add_node(second_artist)
 
+                # Prepare list of roles to be added to the new collaboration
                 roles: List[str] = []
                 if j["roles"] is not None:
                     for k in j["roles"]:
                         roles.append(k)
 
-                if not super().has_edge(i, second_artist):
-                    # Make new collaboration and add it to collaborations
-                    new_collaboration: Collaboration = Collaboration(i, second_artist, roles)
-                    self.__collaborations.append(new_collaboration)
-                    super().add_edge(i, second_artist)
-                else:
-                    super().incr_edge(i, second_artist)
+                # Make new collaboration and add it to collaborations
+                new_collaboration: Collaboration = Collaboration(i, second_artist, roles)
+                self.add_collaboration(new_collaboration)
 
     def add_collaboration(self, collab: Collaboration) -> None:
         if not super().has_edge(collab.artist0, collab.artist1):
